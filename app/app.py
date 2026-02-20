@@ -42,13 +42,13 @@ st.markdown("""
 
 @st.cache_data(show_spinner=False)
 def load_and_process():
-    df = load_raw_data()
-    df = clean_data(df)
-    df = add_features(df)
-    return df
+    raw_df = load_raw_data()
+    cleaned_df = clean_data(raw_df)
+    cleaned_df = add_features(cleaned_df)
+    return raw_df, cleaned_df
 
 def main():
-    df = load_and_process()
+    raw_df, df = load_and_process()
 
     st.sidebar.title("🔎 Filters")
 
@@ -76,7 +76,7 @@ def main():
         (df["Category"].isin(category))
     ]
 
-    render_dashboard(filtered_df)
+    render_dashboard(raw_df, filtered_df)
 
     st.markdown(
         '<div class="footer">© 2026 | E-Commerce BI Dashboard | Built by Atharva Pawar</div>',
