@@ -1,16 +1,27 @@
 import plotly.express as px
 
 def monthly_sales_trend(df):
-    monthly = df.groupby("Order Date")["Sales"].sum().reset_index()
+    monthly = (
+        df.groupby("Year-Month")["Sales"]
+        .sum()
+        .reset_index()
+        .sort_values("Year-Month")
+    )
 
     fig = px.line(
         monthly,
-        x="Order Date",
+        x="Year-Month",
         y="Sales",
-        title="Sales Trend Over Time",
+        title="Monthly Sales Trend",
         markers=True
     )
-    fig.update_layout(template="plotly_dark")
+
+    fig.update_layout(
+        template="plotly_dark",
+        xaxis_title="Month",
+        yaxis_title="Total Sales"
+    )
+
     return fig
 
 
