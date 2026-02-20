@@ -7,12 +7,12 @@ from src.visualization import (
     correlation_heatmap
 )
 
-def render_dashboard(df):
+def render_dashboard(raw_df, df):
 
     st.title("📊 E-Commerce Sales Analytics & Business Intelligence")
 
-    tab1, tab2, tab3, tab4 = st.tabs(
-        ["Overview", "Sales Analysis", "Customer Insights", "Statistics"]
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(
+        ["Overview", "Sales Analysis", "Customer Insights", "Statistics", "Data Explorer"]
     )
 
     # ---- Overview ----
@@ -22,11 +22,11 @@ def render_dashboard(df):
         kpis = calculate_kpis(df)
         col1, col2, col3, col4, col5 = st.columns(5)
 
-        col1.markdown(f'<div class="kpi-card"><h4>Total Sales</h4><h2>${kpis["Total Sales"]:,.0f}</h2></div>', unsafe_allow_html=True)
-        col2.markdown(f'<div class="kpi-card"><h4>Total Profit</h4><h2>${kpis["Total Profit"]:,.0f}</h2></div>', unsafe_allow_html=True)
-        col3.markdown(f'<div class="kpi-card"><h4>Total Orders</h4><h2>{kpis["Total Orders"]}</h2></div>', unsafe_allow_html=True)
-        col4.markdown(f'<div class="kpi-card"><h4>Avg Order Value</h4><h2>${kpis["Avg Order Value"]:,.2f}</h2></div>', unsafe_allow_html=True)
-        col5.markdown(f'<div class="kpi-card"><h4>Profit Margin</h4><h2>{kpis["Profit Margin %"]:.2f}%</h2></div>', unsafe_allow_html=True)
+        col1.metric("Total Sales", f"${kpis['Total Sales']:,.0f}")
+        col2.metric("Total Profit", f"${kpis['Total Profit']:,.0f}")
+        col3.metric("Total Orders", f"{kpis['Total Orders']}")
+        col4.metric("Avg Order Value", f"${kpis['Avg Order Value']:,.2f}")
+        col5.metric("Profit Margin", f"{kpis['Profit Margin %']:.2f}%")
 
     # ---- Sales ----
     with tab2:
@@ -51,3 +51,36 @@ def render_dashboard(df):
     # ---- Statistics ----
     with tab4:
         st.plotly_chart(correlation_heatmap(df), use_container_width=True)
+
+    # ---- Data Explorer ----
+    with tab5:
+        st.subheader("Data Explorer")
+
+        data_option = st.radio(
+            "Select Data View:",
+            ["Raw Data", "Cleaned & Filtered Data"]
+        )
+
+        if data_option == "Raw Data":
+            selected_df = raw_df
+        else:
+            selected_df = df
+
+        st.write("### Dataset Shape")
+        st.write(f"Rows: {selected_df.shape[0]}, Columns: {selected_df.shape[1]}")
+
+        st.write("### Column Names")
+        st.write(list(selected_df.columns))
+
+        st.write("### Preview")
+        st.dataframe(selected_df.head(50), use_container_width=True)
+
+        st.write("### Summary Statistics")
+        st.dataframe(selected_df.describe(), use_container_width=True)
+
+        st.download_button(
+            label="Download Selected Data",
+            data=selected_df.to_csv(index=False),
+            file_name="data_export.csv",
+            mime="text/csv"
+        )
