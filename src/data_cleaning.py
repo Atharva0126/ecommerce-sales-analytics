@@ -6,25 +6,20 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # Remove duplicates
     df.drop_duplicates(inplace=True)
 
-    # Drop missing Sales/Profit
+    # Remove missing critical values
     df.dropna(subset=["Sales", "Profit"], inplace=True)
 
-    # Strip spaces from column names
+    # Strip column whitespace
     df.columns = df.columns.str.strip()
 
-    # Strip spaces from date column values
-    df["Order Date"] = df["Order Date"].astype(str).str.strip()
+    # ---- Correct Date Parsing (Your Dataset Format: DD-MM-YYYY) ----
+    df["Order Date"] = pd.to_datetime(
+        df["Order Date"],
+        format="%d-%m-%Y",   # <-- This matches your dataset
+        errors="coerce"
+    )
 
-    # ---- Try multiple date formats safely ----
-    try:
-        df["Order Date"] = pd.to_datetime(df["Order Date"], format="%m/%d/%Y")
-    except:
-        try:
-            df["Order Date"] = pd.to_datetime(df["Order Date"], format="%d-%m-%Y")
-        except:
-            df["Order Date"] = pd.to_datetime(df["Order Date"], errors="coerce")
-
-    # Remove invalid dates
+    # Remove invalid dates if any
     df = df.dropna(subset=["Order Date"])
 
     return df
