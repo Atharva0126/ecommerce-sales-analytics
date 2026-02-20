@@ -40,13 +40,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def load_and_process():
     df = load_raw_data()
     df = clean_data(df)
     df = add_features(df)
     return df
-
 
 def main():
     df = load_and_process()
