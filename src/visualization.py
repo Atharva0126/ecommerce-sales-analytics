@@ -1,6 +1,7 @@
 import plotly.express as px
 
 def monthly_sales_trend(df):
+
     monthly = (
         df.groupby("Year-Month")["Sales"]
         .sum()
@@ -12,20 +13,16 @@ def monthly_sales_trend(df):
         monthly,
         x="Year-Month",
         y="Sales",
-        title="Monthly Sales Trend",
-        markers=True
+        markers=True,
+        title="Monthly Sales Trend"
     )
 
-    fig.update_layout(
-        template="plotly_dark",
-        xaxis_title="Month",
-        yaxis_title="Total Sales"
-    )
-
+    fig.update_layout(template="plotly_dark")
     return fig
 
 
 def sales_by_category(df):
+
     category = df.groupby("Category")["Sales"].sum().reset_index()
 
     fig = px.bar(
@@ -35,11 +32,13 @@ def sales_by_category(df):
         color="Category",
         title="Sales by Category"
     )
+
     fig.update_layout(template="plotly_dark")
     return fig
 
 
 def region_sales(df):
+
     region = df.groupby("Region")["Sales"].sum().reset_index()
 
     fig = px.bar(
@@ -49,11 +48,13 @@ def region_sales(df):
         color="Region",
         title="Region-wise Sales"
     )
+
     fig.update_layout(template="plotly_dark")
     return fig
 
 
 def correlation_heatmap(df):
+
     corr = df[["Sales", "Profit", "Quantity"]].corr()
 
     fig = px.imshow(
@@ -62,5 +63,6 @@ def correlation_heatmap(df):
         color_continuous_scale="RdBu",
         title="Correlation Heatmap"
     )
+
     fig.update_layout(template="plotly_dark")
     return fig
