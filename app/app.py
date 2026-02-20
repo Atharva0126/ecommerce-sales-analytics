@@ -8,7 +8,7 @@ import streamlit as st
 from src.data_loader import load_raw_data
 from src.data_cleaning import clean_data
 from src.feature_engineering import add_features
-from app.dashboard import render_dashboard
+from dashboard import render_dashboard
 
 st.set_page_config(
     page_title="E-Commerce BI Dashboard",
