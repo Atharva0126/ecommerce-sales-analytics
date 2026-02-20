@@ -6,17 +6,25 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # Remove duplicates
     df.drop_duplicates(inplace=True)
 
-    # Drop rows where critical values missing
+    # Drop missing Sales/Profit
     df.dropna(subset=["Sales", "Profit"], inplace=True)
 
-    # --- Robust Date Parsing ---
-    df["Order Date"] = pd.to_datetime(
-        df["Order Date"],
-        errors="coerce",       # converts invalid dates to NaT
-        infer_datetime_format=True
-    )
+    # Strip spaces from column names
+    df.columns = df.columns.str.strip()
 
-    # Remove rows where date failed
-    df.dropna(subset=["Order Date"], inplace=True)
+    # Strip spaces from date column values
+    df["Order Date"] = df["Order Date"].astype(str).str.strip()
+
+    # ---- Try multiple date formats safely ----
+    try:
+        df["Order Date"] = pd.to_datetime(df["Order Date"], format="%m/%d/%Y")
+    except:
+        try:
+            df["Order Date"] = pd.to_datetime(df["Order Date"], format="%d-%m-%Y")
+        except:
+            df["Order Date"] = pd.to_datetime(df["Order Date"], errors="coerce")
+
+    # Remove invalid dates
+    df = df.dropna(subset=["Order Date"])
 
     return df
