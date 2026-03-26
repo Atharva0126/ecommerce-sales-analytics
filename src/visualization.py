@@ -1,3 +1,6 @@
+from sklearn.linear_model import LinearRegression
+import numpy as np
+import plotly.graph_objects as go
 import plotly.express as px
 
 def monthly_sales_trend(df):
@@ -65,4 +68,57 @@ def correlation_heatmap(df):
     )
 
     fig.update_layout(template="plotly_dark")
+    return fig
+
+
+def sales_forecast(df):
+
+    # Aggregate monthly sales
+    monthly = (
+        df.groupby("Year-Month")["Sales"]
+        .sum()
+        .reset_index()
+        .sort_values("Year-Month")
+    )
+
+    # Convert to numeric index
+    monthly["t"] = np.arange(len(monthly))
+
+    X = monthly[["t"]]
+    y = monthly["Sales"]
+
+    # Train model
+    model = LinearRegression()
+    model.fit(X, y)
+
+    # Predict next 6 months
+    future_steps = 6
+    future_t = np.arange(len(monthly), len(monthly) + future_steps).reshape(-1, 1)
+    predictions = model.predict(future_t)
+
+    # Create future labels
+    future_months = [f"Future-{i+1}" for i in range(future_steps)]
+
+    # Plot
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=monthly["Year-Month"],
+        y=monthly["Sales"],
+        mode='lines+markers',
+        name="Actual"
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=future_months,
+        y=predictions,
+        mode='lines+markers',
+        name="Forecast"
+    ))
+
+    fig.update_layout(
+        title="Sales Forecast (Next 6 Months)",
+        template="plotly_dark"
+    )
+
     return fig
