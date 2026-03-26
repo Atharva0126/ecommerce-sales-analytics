@@ -1,4 +1,5 @@
 import streamlit as st
+from src.visualization import sales_forecast
 from src.kpi_calculations import calculate_kpis
 from src.visualization import (
     monthly_sales_trend,
@@ -11,8 +12,8 @@ def render_dashboard(raw_df, df):
 
     st.title("📊 E-Commerce Sales Analytics & Business Intelligence")
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(
-        ["Overview", "Sales Analysis", "Customer Insights", "Statistics", "Data Explorer"]
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
+    ["Overview", "Sales Analysis", "Customer Insights", "Statistics", "Data Explorer", "Forecasting"]
     )
 
     # ---- Overview ----
@@ -84,3 +85,13 @@ def render_dashboard(raw_df, df):
             file_name="data_export.csv",
             mime="text/csv"
         )
+
+    # ---- Forecasting ----
+    with tab6:
+        st.subheader("📈 Sales Forecast")
+    
+        try:
+            fig = sales_forecast(df)
+            st.plotly_chart(fig, use_container_width=True)
+        except Exception as e:
+            st.warning("Forecasting not available for this dataset")
