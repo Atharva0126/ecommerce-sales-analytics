@@ -1,5 +1,8 @@
 # 🛒 E-commerce Data Analytics Case Study
 
+## 🚀 Live Demo
+🔗 Streamlit App: https://ecommerce-sales-analytics-bu8ozfu6de5mi75nazhffu.streamlit.app/
+
 ## 🔍 Business Problem
 E-commerce businesses collect large volumes of customer and transaction data, but often fail to leverage it effectively for decision-making.
 
