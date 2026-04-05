@@ -51,4 +51,6 @@ This analysis demonstrates how data-driven insights can:
 
 ## 🚀 Future Improvements
 - Real-time dashboard integration  
-- Predictive analytics (customer churn prediction)  
+- Predictive analytics (customer churn prediction)
+
+This project focuses on translating raw data into business decisions rather than just technical analysis.
